@@ -37,6 +37,7 @@ class TestPDFPatternAnalyzer:
                 "25.12.18 - DR - 418500-10 - I7495694 - 7063 - Franklin.pdf",
                 {
                     "date": "25.12.18",
+                    "date_yy_mm_dd": "18-12-25",
                     "project": "418500-10",
                     "invoice_id": "I7495694",
                     "line_item": "7063",
@@ -47,6 +48,7 @@ class TestPDFPatternAnalyzer:
                 "26.01.02 - DR - 18999 - 8522940 - 7078 - Guillevin.pdf",
                 {
                     "date": "26.01.02",
+                    "date_yy_mm_dd": "02-01-26",
                     "project": "18999",
                     "invoice_id": "8522940",
                     "line_item": "7078",
@@ -57,6 +59,7 @@ class TestPDFPatternAnalyzer:
                 "25.12.19 - DR - 68209 - 021336 - BM14278 - Wesco.pdf",
                 {
                     "date": "25.12.19",
+                    "date_yy_mm_dd": "19-12-25",
                     "project": "68209",
                     "invoice_id": "021336",
                     "line_item": "BM14278",
@@ -69,7 +72,10 @@ class TestPDFPatternAnalyzer:
         """Test parsing valid PDF filenames."""
         pattern = PDFPatternAnalyzer.parse_filename(filename)
         assert pattern is not None
+        # Check original date format (DD.MM.YY)
         assert pattern.date == expected["date"]
+        # Check converted date format (YY-MM-DD)
+        assert pattern.date_yy_mm_dd() == expected.get("date_yy_mm_dd", expected["date"])
         assert pattern.project_number == expected["project"]
         assert pattern.invoice_id == expected["invoice_id"]
         assert pattern.line_item == expected["line_item"]

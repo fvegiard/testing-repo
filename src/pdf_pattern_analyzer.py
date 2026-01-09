@@ -18,10 +18,23 @@ class PDFPattern:
     vendor: str
     original_filename: str
 
+    def date_yy_mm_dd(self) -> str:
+        """Convert date from DD.MM.YY to YY-MM-DD format.
+
+        Returns:
+            Date in YY-MM-DD format
+        """
+        # Parse DD.MM.YY format
+        parts = self.date.split(".")
+        if len(parts) == 3:
+            day, month, year = parts
+            return f"{year}-{month}-{day}"
+        return self.date
+
     def __str__(self) -> str:
         """Return formatted string representation."""
         return (
-            f"Date: {self.date} | "
+            f"Date: {self.date_yy_mm_dd()} | "
             f"Project: {self.project_number} | "
             f"Invoice: {self.invoice_id} | "
             f"Line: {self.line_item} | "
@@ -92,7 +105,7 @@ class PDFPatternAnalyzer:
 
         # Extract statistics
         vendors = [p.vendor for p in parsed_patterns]
-        dates = [p.date for p in parsed_patterns]
+        dates = [p.date_yy_mm_dd() for p in parsed_patterns]  # Convert to YY-MM-DD
         projects = [p.project_number for p in parsed_patterns]
         invoice_ids = [p.invoice_id for p in parsed_patterns]
 
@@ -135,7 +148,7 @@ class PDFPatternAnalyzer:
             "```",
             "",
             "### Pattern Components:",
-            "1. **Date (DD.MM.YY)**: Date in day.month.year format (2-digit year)",
+            "1. **Date (DD.MM.YY)**: Date in day.month.year format (2-digit year), displayed as YY-MM-DD in output",
             "2. **DR**: Constant prefix (likely 'DR' for company identifier)",
             "3. **Project Number**: Project or order number (may include hyphens)",
             "4. **Invoice ID**: Invoice identifier (may start with letter prefix)",
@@ -191,7 +204,7 @@ class PDFPatternAnalyzer:
 
         for pattern in analysis["patterns"]:
             report_lines.append(f"### {pattern.original_filename}")
-            report_lines.append(f"- Date: `{pattern.date}`")
+            report_lines.append(f"- Date: `{pattern.date_yy_mm_dd()}`")
             report_lines.append(f"- Project: `{pattern.project_number}`")
             report_lines.append(f"- Invoice ID: `{pattern.invoice_id}`")
             report_lines.append(f"- Line Item: `{pattern.line_item}`")
